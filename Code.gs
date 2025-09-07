@@ -606,7 +606,7 @@ function getDocumentaryInformation(category, subcategory, topic, number) {
     newPrompt = newPrompt + " Make sure to provide as much detailed information as humanly possible, providing specific examples for every claim made, but make sure that all information is thoroughly explained, leaving the reader with no questions, and presented in a cohesive and easy-to-understand manner. Make sure to provide your answer in one or more paragraphs.";
   }
 
-  let url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCnhZl83hlfanHBoVXxJ1HWg0rSJQaynPM';
+  let url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=<insert_key_here>';
 
   let payload = JSON.stringify({
     contents: {
@@ -627,7 +627,7 @@ function getDocumentaryInformation(category, subcategory, topic, number) {
 }
 
 function getQuestions(inp) {
-  let url = 'https://generativelanguage.googleapis.com/v1beta/QuestionGenerator:generateContent?key=AIzaSyCnhZl83hlfanHBoVXxJ1HWg0rSJQaynPM';
+  let url = 'https://generativelanguage.googleapis.com/v1beta/QuestionGenerator:generateContent?key=<insert_key_here>';
 
   let payload = JSON.stringify({
     contents: {
