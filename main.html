@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<head>
+    <title>Online HTML Editor</title>
+    <style>
+        :root {
+            --color: #000000;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 0px;
+        }
+
+        * {
+            margin: 0vh;
+            padding: 0vh;
+            outline: none;
+            box-sizing: border-box;
+            scrollbar-width: none;
+        }
+
+        html {
+            font-family: "Arial", "Sans-serif";
+            font-size: 0.99vh;
+        }
+
+        body {
+            width: 100%;
+            height: 99vh;
+        }
+        
+        p {
+            overflow-wrap: break-word;
+        }
+
+        input[type='color'] {
+            width: 100%;
+        }
+        
+        #orient {
+            visibility: hidden;
+        }
+
+        #loading {
+            visibility: hidden;
+        }
+        
+        #loading div {
+            border: 1.5vmin solid #eeeeee;
+            border-top: 1.5vmin solid var(--color);
+            border-radius: 50%;
+            width: 7vmin;
+            height: 7vmin;
+            animation: spin 1s linear infinite;
+        }
+        
+        #aiLoading {
+            visibility: hidden;
+        }
+        
+        #aiLoading div {
+            border: 1.5vmin solid #eeeeee;
+            border-top: 1.5vmin solid var(--color);
+            border-radius: 50%;
+            width: 7vmin;
+            height: 7vmin;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (orientation: portrait) {
+            #orient {
+                visibility: visible;
+            }
+        }
+
+    </style>
+</head>
+
+<body data-grid="10-90 100 0-0">
+    <div data-place="1-2 1-2" data-colors="var(--color) #ffffff" data-edge="0   3" data-flex="r sb-c 2">
+        <div data-flex="r sb-t" style="flex-grow: 1;">
+            <p data-font="5 400  l">QB Learn</p>
+            <button id="ais" data-edge="0 0.5 1 1.3 white" data-colors="var(--color)" data-font="1.8 700 #ffffff c" data-hover="  white var(--color)" data-active="  var(--color) white">AI</button>
+        </div>
+        <p id="menu" data-font="5 400  l" data-hover="   black" data-active="   white">☰</p>
+    </div>
+    <div id="qbreader" data-place="2-3 1-2" data-grid="11-11-78 70-30">
+        <div data-place="1-2 1-2" data-grid=" 79-19 2" data-edge="1 1 2 1.5">
+            <input id="input" data-edge="0 0.2 0.6 0.1 black" data-font="2   c" data-focus="0.4" data-font="2 black  l">
+            <button id="submit" data-colors="var(--color) white" data-edge="0 0.3 1 0" data-hover="  white var(--color)" data-active="  var(--color) white" data-font="2 400 white c">Next</button>
+        </div>
+        <div data-place="2-3 1-2" data-grid=" 79-19 2" data-edge="1 1 2 1.5">
+            <div data-flex="r c-c 1">
+                <p id="score1" data-font="1.8" data-flex="r c-c 0">0/0/0,</p>
+                <p id="score2" data-font="1.8" data-flex="r c-c 0">(0 seen),</p>
+                <p id="score3" data-font="1.8" data-flex="r c-c 0">0 pts,</p>
+                <p id="score4" data-font="1.8" data-flex="r c-c 0">celerity 0.000</p>
+            </div>
+            <button id="reset" data-colors="var(--color) white" data-edge="0 0.3 1 0" data-hover="  white var(--color)" data-active="  var(--color) white" data-font="2 400 white c">Reset</button>
+        </div>
+        <div data-place="3-4 1-2" data-edge="1 1 2 1.5" data-grid="90-6 100 4">
+            <div data-flex="c s-t 3">
+                <p id="cats" data-edge="0 0.3 0.6 0.5" data-font="2 400 black c" data-colors="white">Welcome to QB Learn!</p>
+                <p id="ques" data-font="2 400  l" data-colors="white">
+                  Thank you for exploring QB Learn! This website brings QB Reader into a learning environment powered by AI, allowing you to analyze QuizBowl questions in a whole new way. Follow the instructions below to get started:<br><br>
+
+                  If you’re ever unsure, simply click the menu icon in the top right corner of the screen. A rules and settings menu will appear. Click the icon again to close it. You can adjust settings such as the website color and reading speed to suit your preferences.<br><br>
+
+                  To customize the difficulty levels and categories, click the checkboxes next to the options you’d like to play. A checked box indicates your selection. If none are checked, all categories and difficulty levels will be used by default.<br><br>
+
+                  When you click the "Next" button, a question will begin to read after the page has finished loading. When you feel confident about an answer, press the space bar to begin typing it. After typing your response, press Enter or click the "Submit" button. The correct answer will then be revealed. If you believe you were incorrectly penalized or rewarded, use the "I Was Right" or "I Was Wrong" button to adjust your score accordingly.<br><br>
+
+                  To access the AI feature, click "Learn," or press the "l" or "r" keys. The AI will analyze the question and its answer, providing insights within 5-10 seconds.<br><br>
+
+                  Once you’re ready to move on, simply click "Next" again. Enjoy your learning experience!
+                </p>
+                <p id="ans" data-font="2 700  l" data-colors="white" data-edge="0 0.3 0.6 1">Click on the "Next" button to get started!</p>
+                <p id="airb" data-font="3 700  l" style="visibility: hidden;">Explanation:</p>
+                <p id="air" data-font="2 400 black l" data-colors="white">
+                </p>
+            </div>
+            <div data-grid="100 49-49 2">
+                <button id="reveal" data-colors="var(--color) white" data-edge="0 0.3 1 0" data-hover="  white var(--color)" data-active="  var(--color) white" data-font="2 400 white c">Reveal</button>
+                <button id="right" data-colors="var(--color) white" data-edge="0 0.3 1 0" data-hover="  white var(--color)" data-active="  var(--color) white" data-font="2 400 white c">I Was Right</button>
+            </div>
+        </div>
+        <div id="loading" data-place="3-4 1-2" data-edge="1 1 2 1.5" data-flex=" c-c " data-colors="white white">
+                <div></div>
+            </div>
+        <div data-place="1-4 2-3" data-edge="1 1 2 1.5" data-flex="c s-t 2">
+            <p data-font="4 700  l">Difficulties:</p>
+            <div id="diff0" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Trash (0)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff1" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Middle School (1)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff2" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Easy High School (2)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff3" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Regular High School (3)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff4" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Hard High School (4)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff5" data-flex="r sb-c 5">
+                <p data-font="2 400  l">National High School (5)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff6" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Easy College (6)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff7" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Medium College (7)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff8" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Regionals College (8)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff9" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Nationals College (9)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="diff10" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Open (10)</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div data-edge="0 0.3"></div>
+            <p data-font="4 700  l">Categories:</p>
+            <div id="cat1" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Literature</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat2" data-flex="r sb-c 5">
+                <p data-font="2 400  l">History</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat3" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Science</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat4" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Fine Arts</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat5" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Religion</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat6" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Mythology</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat7" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Philosophy</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat8" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Social Science</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat9" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Current Events</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat10" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Geography</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat11" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Other Academic</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+            <div id="cat12" data-flex="r sb-c 5">
+                <p data-font="2 400  l">Trash</p>
+                <div data-state="off" data-font="2 400 white l" data-colors="white" data-edge="0 0.2 0.4 0" data-hover="  var(--color) var(--color)" data-active="  white white">&nbsp&nbsp&nbsp&nbsp</div>
+            </div>
+        </div>
+    </div>
+    <div id="rules" data-place="2-3 1-2" data-colors="rgba(0,0,0,0.8) white" data-edge="0 0 0 15" data-grid="100 100 0" style="visibility: hidden;">
+        <div data-edge="1 1 2 3" data-colors="white" data-flex="c s-t 3">
+            <p data-font="3 700  l">Settings:</p>
+            <div data-grid="100 90-10">
+                <p data-font="2.5 400  l">Color (website theme): </p>
+                <input data-place="1-2 2-3 t-t" data-edge="0 0.3 0.5 0" data-colors="white" type="color">
+            </div>
+            <div data-grid="100 90-10">
+                <p data-font="2.5 400  l">Speed (words per second): </p>
+                <input data-place="1-2 2-3 t-t" data-edge="0 0.3 0.5 0.25" data-colors="white" type="number" data-font="2 400  l">
+            </div>
+            <p data-font="3 700  l">Rules:</p>
+            <p data-font="2 400  l">Thank you for exploring QB Learn! This website brings QB Reader into a learning environment powered by AI, allowing you to analyze QuizBowl questions in a whole new way. Follow the instructions below to get started:<br><br>
+
+                  To customize the difficulty levels and categories, click the checkboxes next to the options you’d like to play. A checked box indicates your selection. If none are checked, all categories and difficulty levels will be used by default.<br><br>
+
+                  When you click the "Next" button, a question will begin to read after the page has finished loading. When you feel confident about an answer, press the space bar to begin typing it. After typing your response, press Enter or click the "Submit" button. The correct answer will then be revealed. If you believe you were incorrectly penalized or rewarded, use the "I Was Right" or "I Was Wrong" button to adjust your score accordingly.<br><br>
+
+                  To access the AI feature, click "Learn," or press the "l" or "r" keys. The AI will analyze the question and its answer, providing insights within 5-10 seconds.<br><br>
+
+                  Once you’re ready to move on, simply click "Next" again. Enjoy your learning experience!</p>
+        </div>
+    </div>
+    <div id="ai" data-place="2-3 1-2" data-colors="rgba(0,0,0,0.8) white" data-edge="0 0 0 15" data-grid="100 100 0" style="visibility: hidden;">
+        <div data-edge="1 1 2 3" data-colors="white" data-flex="c s-t 3" data-place="1-2 1-2">
+            <p data-font="3 700  l">AI:</p>
+            <div data-grid="100 24-24-48 2">
+                <select id="categorySelect" data-edge="0 0.4 0.8 0" data-font="2 400  l" data-colors="white black">
+                    <option>Literature</option>
+                    <option>History</option>
+                    <option>Science</option>
+                    <option>Fine Arts</option>
+                    <option>Religion</option>
+                    <option>Mythology</option>
+                    <option>Philosophy</option>
+                    <option>Social Science</option>
+                    <option>Geography</option>
+                    <option>Current Events/Other Academic/Trash</option>
+                </select>
+                <select id="subcategorySelect" data-edge="0 0.4 0.8 0" data-font="2 400  l"  data-colors="white black">
+                    <option>Author/Poet/etc.</option>
+                    <option>Novel/Poem/etc.</option>
+                    <option>Movement</option>
+                </select>
+                <input id="generationInput" type="text" data-edge="0 0.4 0.8 0.5" data-colors="white" data-font="2 400  l" placeholder="Topic">
+            </div>
+            <button id="generateContent" data-colors="var(--color) white" data-edge="0 0.4 0.8 0.5" data-hover="  white var(--color)" data-active="  var(--color) white">Generate</button>
+            <p id="aiTextDisplay" data-font="2 400  l"></p>
+        </div>
+        <div id="aiLoading" data-place="1-2 1-2" data-edge="1 1 2 3" data-font="2 700 black l" data-flex=" c-c" data-colors="white">
+            <div></div>
+        </div>
+    </div>
+    <div id="orient" data-place="2-3 1-2" data-colors="rgba(0,0,0,0.8) white"data-edge="0 0 0" data-grid="100 100 0">
+        <div data-edge="1 1 2 3" data-colors="white" data-flex="c c-c 3">
+            <p data-font="3 400 #b30000 c">This website does not support portrait mode.  Please switch to landscape mode and try again.</p>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll("[data-grid]").forEach(element => {
+                const [rows = "100", columns = "100", gaps = "0-0"] = element.getAttribute("data-grid").split(" ");
+                element.style.display = "grid"; 
+                element.style.gridTemplateRows = rows.split("-").map(item => `${item}%`).join(" ");
+                element.style.gridTemplateColumns = columns.split("-").map(item => `${item}%`).join(" ");
+                element.style.gap = gaps.split("-").map(item => `${item}%`).join(" ");
+            });
+            
+            const placeKey = {"s": "start", "c": "center", "e": "end", "t": "stretch"};
+            document.querySelectorAll("[data-grid] > [data-place]").forEach(element => {
+                const [row = "0-0", column = "0-0", place = "t-t"] = element.getAttribute("data-place").split(" ");
+                element.style.gridRow = row.split("-").join(" / ");
+                element.style.gridColumn = column.split("-").join(" / ");
+                element.style.placeSelf = place.split("-").map(item => placeKey[item]).join(" ");
+            });
+            
+            const directionKey = {"r": "row", "c": "column"};
+            const flexKey = {"s": "flex-start", "c": "center", "e": "flex-end", "sb": "space-between", "se": "space-evenly", "sa": "space-around", "t": "stretch", "b": "baseline"};
+            document.querySelectorAll("[data-flex]").forEach(element => {
+                const [direction = "r", place = "fs-t", gap = "0"] = element.getAttribute("data-flex").split(" ");
+                element.style.display = "flex";
+                element.style.flexDirection = `${directionKey[direction]}`;
+                const [justify = "fs", align = "t"] = place.split("-");
+                element.style.justifyContent = `${flexKey[justify]}`;
+                element.style.alignItems = `${flexKey[align]}`;
+                element.style.gap = `${gap}%`;
+                element.style.overflow = "auto";
+            });
+            
+            document.querySelectorAll("[data-flex] *").forEach(element => {
+                element.style.minHeight = "min-content";
+            });
+            
+            document.querySelectorAll("[data-edge]").forEach(element => {
+                const [margin = "0", border = "0", radius = "0", padding = "0", color = "var(--color)"] = element.getAttribute("data-edge").split(" ");
+                element.style.margin = `${margin}rem`;
+                element.style.border = `${border}rem solid ${color}`;
+                element.style.borderRadius = `${radius}rem`;
+                element.style.padding = `${padding}rem`;
+            });
+            
+            document.querySelectorAll("[data-colors]").forEach(element => {
+               const [background = "#ffffff", text = "#000000"] = element.getAttribute("data-colors").split(" ");
+               element.style.backgroundColor = `${background}`;
+               element.style.color = `${text}`;
+            });
+            
+            const alignKey = {"l": "left", "c": "center", "r": "right", "j": "justify"};
+            document.querySelectorAll("[data-font]").forEach(element => {
+                const [size = "1", weight = "n", color = "#000000", align = "c"] = element.getAttribute("data-font").split(" ");
+                element.style.fontSize = `${size}rem`;
+                element.style.fontWeight = `${weight}`;
+                element.style.color = `${color}`;
+                element.style.textAlign = `${alignKey[align]}`;
+            });
+            
+            let hoverCount = 0;
+            document.querySelectorAll("[data-hover]").forEach(element => {
+                hoverCount += 1;
+                element.classList.add(`hover${hoverCount}`);
+                const style = getComputedStyle(element);
+                const [width = style.borderWidth, border = style.borderColor, background = style.backgroundColor, text = style.color] = element.getAttribute("data-hover").split(" ");
+                const sheet = document.styleSheets[0];
+                sheet.insertRule(`.hover${hoverCount}:hover { border: ${width}rem solid ${border} !important; background-color: ${background} !important; color: ${text} !important; cursor: pointer; }`, sheet.cssRules.length);
+            });
+            
+            let activeCount = 0;
+            document.querySelectorAll("[data-active]").forEach(element => {
+                activeCount += 1;
+                element.classList.add(`active${activeCount}`);
+                const style = getComputedStyle(element);
+                const [width = style.borderWidth, border = style.borderColor, background = style.backgroundColor, text = style.color] = element.getAttribute("data-active").split(" ");
+                const sheet = document.styleSheets[0];
+                sheet.insertRule(`.active${activeCount}:active { border: ${width}rem solid ${border} !important; background-color: ${background} !important; color: ${text} !important; }`, sheet.cssRules.length);
+            });
+            
+            let focusCount = 0;
+            document.querySelectorAll("[data-focus]").forEach(element => {
+                focusCount += 1;
+                element.classList.add(`focus${focusCount}`);
+                const style = getComputedStyle(element);
+                const [width = style.borderWidth, border = style.borderColor, background = style.backgroundColor, text = style.color] = element.getAttribute("data-focus").split(" ");
+                const sheet = document.styleSheets[0];
+                sheet.insertRule(`.focus${focusCount}:focus { border: ${width}rem solid ${border} !important; background-color: ${background} !important; color: ${text} !important; }`, sheet.cssRules.length);
+            });
+            
+            document.querySelectorAll("[data-state]").forEach(element => {
+                element.onclick = function() {
+                    if (element.getAttribute("data-state") == "off") {
+                        element.setAttribute("data-state", "on");
+                        element.style.backgroundColor = "var(--color)";
+                    } else if (element.getAttribute("data-state") == "on") {
+                        element.setAttribute("data-state", "off");
+                        element.style.backgroundColor = "white";
+                    }
+                }
+            });
+
+            document.querySelector("input[type='color']").onchange = function() {
+              const colorPicker = document.querySelector("input[type='color']");
+              const colorValue = colorPicker.value;
+              document.documentElement.style.setProperty('--color', colorValue);
+            }
+
+            document.querySelector("input[type='number']").onchange = function() {
+              const num = document.querySelector("input[type='number']").value;
+              if (num <= 0) {
+                wps = 0.01;
+              } else {
+                wps = num;
+              }
+            }
+
+            document.querySelector("#reset").onclick = function() {
+              document.querySelector("#score1").innerHTML = "0/0/0,";
+              document.querySelector("#score2").innerHTML = "(0 seen),";
+              document.querySelector("#score3").innerHTML = "0 pts,"
+              document.querySelector("#score4").innerHTML = "celerity 0.000";
+            }
+
+            document.querySelector("#menu").onclick = function() {
+              if (document.querySelector("#rules").style.visibility == "hidden") {
+                document.querySelector("#rules").style.visibility = "visible";
+                document.querySelector("#ai").style.visibility = "hidden";
+              } else {
+                document.querySelector("#rules").style.visibility = "hidden";
+              }
+            }
+
+            document.querySelector("#ais").onclick = function() {
+              if (document.querySelector("#ai").style.visibility == "hidden") {
+                document.querySelector("#ai").style.visibility = "visible";
+                document.querySelector("#rules").style.visibility = "hidden";
+              } else {
+                document.querySelector("#ai").style.visibility = "hidden";
+              }
+            }
+
+            document.querySelector("#categorySelect").onchange = function() {
+              let category = document.querySelector("#categorySelect").value;
+              switch (category) {
+                case "Literature":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Author/Poet/etc.</option><option>Novel/Poem/etc.</option><option>Movement</option>";
+                  break;
+                case "History":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Figure/Group</option><option>Period/Event</option><option>Governing Body</option>";
+                  break;
+                case "Science":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Object/Device</option><option>Process/Technique</option><option>Formula</option><option>Scientist</option><option>Pure Substance</option><option>Problem/Disease</option><option>Property</option>";
+                  break;
+                case "Fine Arts":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Artist/Musician/etc.</option><option>Painting/Piece/etc.</option><option>Movement</option>";
+                  break;
+                case "Religion":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Religious System</option><option>Holiday</option><option>Practice</option>";
+                  break;
+                case "Mythology":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Deity/Person</option><option>Myth System</option><option>Object</option>";
+                  break;
+                case "Philosophy":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>School of Thought</option><option>Philosopher</option><option>Work/Text</option>";
+                  break;
+                case "Social Science":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Social Scientist</option><option>Theory/Concept</option>";
+                  break;
+                case "Geography":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Country/State/etc.</option><option>National Park/Physical Feature</option><option>City</option>";
+                  break;
+                case "Current Events/Other Academic/Trash":
+                  document.querySelector("#subcategorySelect").innerHTML = "<option>Figure/Group</option><option>Country/State/etc.</option><option>Period/Event</option><option>Artist/Band</option><option>TV Show/Movie</option><option>Game</option><option>Sports Team</option><option>Sports Player</option><option>Company</option>";
+                  break;
+              }
+            }
+
+            function runGoogleScriptFunction(fn, ...args) {
+              return new Promise((resolve, reject) => {
+                google.script.run
+                  .withSuccessHandler((result) => {
+                    resolve(result);
+                  })
+                  .withFailureHandler((error) => {
+                    reject(error);
+                  })[fn](...args);
+              });
+            }
+
+            let generating = false;
+
+            document.querySelector("#generateContent").onclick = function() {
+              if (generating) {
+                return;
+              }
+              let categ = document.querySelector("#categorySelect").value;
+              let subcateg = document.querySelector("#subcategorySelect").value;
+              let topic = document.querySelector("#generationInput").value;
+              if (!topic.replace(/\s/g, "")) {
+                return;
+              }
+              document.querySelector("#generationInput").value = "";
+              generating = true;
+              document.querySelector("#aiLoading").style.visibility = "visible";
+              runGoogleScriptFunction("getDocumentaryInformation", categ, subcateg, topic, 0).then(result => {
+                document.querySelector("#aiTextDisplay").innerHTML = result;
+                document.querySelector("#aiLoading").style.visibility = "hidden";
+                runGoogleScriptFunction("getDocumentaryInformation", categ, subcateg, topic, 1).then(res2 => {
+                  document.querySelector("#aiTextDisplay").innerHTML = document.querySelector("#aiTextDisplay").innerHTML + "<br>" + res2;
+                  runGoogleScriptFunction("getDocumentaryInformation", categ, subcateg, topic, 2).then(res3 => {
+                    document.querySelector("#aiTextDisplay").innerHTML = document.querySelector("#aiTextDisplay").innerHTML + "<br>" + res3;
+                    runGoogleScriptFunction("getDocumentaryInformation", categ, subcateg, topic, 3).then(res4 => {
+                      document.querySelector("#aiTextDisplay").innerHTML = document.querySelector("#aiTextDisplay").innerHTML + "<br>" + res4;
+                      runGoogleScriptFunction("getDocumentaryInformation", categ, subcateg, topic, 4).then(res5 => {
+                        document.querySelector("#aiTextDisplay").innerHTML = document.querySelector("#aiTextDisplay").innerHTML + "<br>" + res5;
+                        runGoogleScriptFunction("getDocumentaryInformation", categ, subcateg, topic, 5).then(res6 => {
+                          document.querySelector("#aiTextDisplay").innerHTML = document.querySelector("#aiTextDisplay").innerHTML + "<br>" + res6;
+                          generating = false;
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            }
+
+            function levenshtein(a, b) {
+              var tmp;
+              var i, j;
+              var alen = a.length;
+              var blen = b.length;
+              var arr = [];
+
+              for (i = 0; i <= alen; i++) {
+                arr[i] = [i];
+              }
+
+              for (j = 0; j <= blen; j++) {
+                arr[0][j] = j;
+              }
+
+              for (i = 1; i <= alen; i++) {
+                for (j = 1; j <= blen; j++) {
+                  tmp = a.charAt(i - 1) === b.charAt(j - 1) ? 0 : 1;
+                  arr[i][j] = Math.min(arr[i - 1][j] + 1, arr[i][j - 1] + 1, arr[i - 1][j - 1] + tmp);
+                }
+              }
+
+              return arr[alen][blen];
+            }
+
+            let rest = [];
+            let curr = buzz;
+            let wps = 10;
+            let playing = false;
+            let typing = false;
+            let buzzed = false;
+            let tempReveal = false;
+            let end = false;
+            let learning = false;
+            let nexting = false;
+            let bold = false;
+            let ifNeg = false;
+            let edit = false;
+            let len = 100;
+            let celerityWord = 0;
+            let pastCelerity = 0;
+            let quit = false;
+
+            function play(words) {
+              playing = true;
+              let end;
+              if (words.length == 0) {
+                end = true;
+              } else {
+                end = false;
+              }
+              if (!end) {
+                let a = document.querySelector("#ques").innerHTML;
+                document.querySelector("#ques").innerHTML = a + " " + words[0];
+              }
+              if (!buzzed) {
+                if (!end) {
+                  setTimeout(() => {
+                    play(words.slice(1, words.length));
+                  }, 1000 / wps);
+                } else {
+                  playing = false;
+                  setTimeout(() => {
+                    if (!quit) {
+                      play(words);
+                    } else {
+                      quit = false;
+                    }
+                  }, 10);
+                }
+              } else {
+                let a = document.querySelector("#ques").innerHTML;
+                document.querySelector("#ques").innerHTML = a + " (#)";
+                document.querySelector("#input").focus();
+                rest = words;
+                celerityWord = words.length;
+                if (words.length > 0 && (words[0] == "(#)" || words[0].substring(0, 8) == "<strong>")) {
+                  bold = true;
+                } else {
+                  bold = false;
+                }
+                if (words.length == 0) {
+                  ifNeg = false;
+                } else {
+                  ifNeg = true;
+                }
+                playing = false;
+                buzzed = false;
+              }
+            }
+
+            document.addEventListener("keydown", function(event) {
+              if (document.querySelector("#ai").style.visibility != "visible") {
+                if (!(document.activeElement == document.querySelector("#input"))) {
+                  if (event.key == " " && playing) {
+                    buzzed = true;
+                    typing = true;
+                    document.querySelector("#submit").innerHTML = "Submit";
+                    document.querySelector("#submit").onclick = () => {submit()}
+                  } else if (event.key == "n" && !nexting && !learning) {
+                    document.querySelector("#submit").click();
+                  } else if (event.key == "l" || event.key == "r") {
+                    document.querySelector("#reveal").click();
+                  }
+                } else if (event.key == "Enter") {
+                  document.querySelector("#submit").click();
+                }
+              } else {
+                if (event.key == "Enter" && document.activeElement == document.querySelector("#generationInput")) {
+                  document.querySelector("#generateContent").click();
+                }
+              }
+            });
+
+            document.querySelector("#right").onclick = function() {
+              if (!edit) {
+                return;
+              }
+              if (document.querySelector("#right").innerHTML == "I Was Right") {
+                if (bold) {
+                  let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+                  pc = parseInt(pc) + 1;
+                  nc = parseInt(nc.substring(0, nc.length - 1)) - 1;
+                  document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc},`;
+                  let score = document.querySelector("#score3").innerHTML;
+                  score = parseInt(score.substring(0, score.length - 5)) + 20;
+                  document.querySelector("#score3").innerHTML = `${score} pts,`;
+                  updateCelerity();
+                } else {
+                  if (ifNeg) {
+                    let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+                    bc = parseInt(bc) + 1;
+                    nc = parseInt(nc.substring(0, nc.length - 1)) - 1;
+                    document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc},`;
+                    let score = document.querySelector("#score3").innerHTML;
+                    score = parseInt(score.substring(0, score.length - 5)) + 15;
+                    document.querySelector("#score3").innerHTML = `${score} pts,`;
+                    updateCelerity();
+                  } else {
+                    let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+                    bc = parseInt(bc) + 1;
+                    document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc}`;
+                    let score = document.querySelector("#score3").innerHTML;
+                    score = parseInt(score.substring(0, score.length - 5)) + 10;
+                    document.querySelector("#score3").innerHTML = `${score} pts,`;
+                    updateCelerity();
+                  }
+                }
+              } else if (document.querySelector("#right").innerHTML == "I Was Wrong") {
+                if (bold) {
+                  let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+                  pc = parseInt(pc) - 1;
+                  nc = parseInt(nc.substring(0, nc.length - 1)) + 1;
+                  document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc},`;
+                  let score = document.querySelector("#score3").innerHTML;
+                  score = parseInt(score.substring(0, score.length - 5)) - 20;
+                  document.querySelector("#score3").innerHTML = `${score} pts,`;
+                  document.querySelector("#score4").innerHTML = `celerity ${pastCelerity.toFixed(3)}`;
+                } else {
+                  if (ifNeg) {
+                    let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+                    bc = parseInt(bc) - 1;
+                    nc = parseInt(nc.substring(0, nc.length - 1)) + 1;
+                    document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc},`;
+                    let score = document.querySelector("#score3").innerHTML;
+                    score = parseInt(score.substring(0, score.length - 5)) - 15;
+                    document.querySelector("#score3").innerHTML = `${score} pts,`;
+                    document.querySelector("#score4").innerHTML = `celerity ${pastCelerity.toFixed(3)}`;
+                  } else {
+                    let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+                    bc = parseInt(bc) - 1;
+                    document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc}`;
+                    let score = document.querySelector("#score3").innerHTML;
+                    score = parseInt(score.substring(0, score.length - 5)) - 10;
+                    document.querySelector("#score3").innerHTML = `${score} pts,`;
+                    document.querySelector("#score4").innerHTML = `celerity ${pastCelerity.toFixed(3)}`;
+                  }
+                }
+              }
+              edit = false;
+            }
+
+            function updateCelerity() {
+              let seen = document.querySelector("#score2").innerHTML;
+              seen = parseInt(seen.substring(1, seen.length - 7)) - 1;
+              pastCelerity = parseFloat(document.querySelector("#score4").innerHTML.substring(9));
+              let newCelerity = parseFloat((pastCelerity * seen + celerityWord / len) / (seen + 1)).toFixed(3);
+              document.querySelector("#score4").innerHTML = `celerity ${newCelerity}`;
+            }
+
+            function power() {
+              let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+              pc = parseInt(pc) + 1;
+              document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc}`;
+              let seen = document.querySelector("#score2").innerHTML;
+              seen = parseInt(seen.substring(1, seen.length - 7)) + 1;
+              document.querySelector("#score2").innerHTML = `(${seen} seen),`;
+              let score = document.querySelector("#score3").innerHTML;
+              score = parseInt(score.substring(0, score.length - 5)) + 15;
+              document.querySelector("#score3").innerHTML = `${score} pts,`;
+              updateCelerity();
+            }
+
+            function buzz() {
+              let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+              bc = parseInt(bc) + 1;
+              document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc}`;
+              let seen = document.querySelector("#score2").innerHTML;
+              seen = parseInt(seen.substring(1, seen.length - 7)) + 1;
+              document.querySelector("#score2").innerHTML = `(${seen} seen),`;
+              let score = document.querySelector("#score3").innerHTML;
+              score = parseInt(score.substring(0, score.length - 5)) + 10;
+              document.querySelector("#score3").innerHTML = `${score} pts,`;
+              updateCelerity();
+            }
+
+            function noScore() {
+              let seen = document.querySelector("#score2").innerHTML;
+              seen = parseInt(seen.substring(1, seen.length - 7)) + 1;
+              document.querySelector("#score2").innerHTML = `(${seen} seen),`;
+            }
+
+            function neg() {
+              let [pc, bc, nc] = document.querySelector("#score1").innerHTML.split("/");
+              nc = parseInt(nc.substring(0, nc.length - 1)) + 1;
+              document.querySelector("#score1").innerHTML = `${pc}/${bc}/${nc},`;
+              let seen = document.querySelector("#score2").innerHTML;
+              seen = parseInt(seen.substring(1, seen.length - 7)) + 1;
+              document.querySelector("#score2").innerHTML = `(${seen} seen),`;
+              let score = document.querySelector("#score3").innerHTML;
+              score = parseInt(score.substring(0, score.length - 5)) - 5;
+              document.querySelector("#score3").innerHTML = `${score} pts,`;
+            }
+
+            function check(answer) {
+              let test;
+              if (/\[/.test(answer)) {
+                test = answer.match(/^(.*?)\[/)[1].replace(/^\s+|\s+$/g, "");
+              } else if (/\(/.test(answer)) {
+                test = answer.match(/^(.*?)\(/)[1].replace(/^\s+|\s+$/g, "");
+              } else {
+                test = answer.replace(/^\s+|\s+$/g, "");
+              }
+              if (levenshtein(document.querySelector("#input").value.replace(/^\s+|\s+$/g, "").toUpperCase(), test.toUpperCase()) <= 5) {
+                if (bold) {
+                  curr = power;
+                } else {
+                  curr = buzz;
+                }
+                document.querySelector("#right").innerHTML = "I Was Wrong";
+              } else {
+                if (ifNeg) {
+                  curr = neg;
+                } else {
+                  curr = noScore;
+                }
+                document.querySelector("#right").innerHTML = "I Was Right";
+              }
+            }
+
+            let ques = ""
+
+            function submit() {
+              if (playing) {
+                return;
+              }
+              document.querySelector("#loading").style.visibility = "visible";
+              check(ques["answer_sanitized"]);
+              curr();
+              document.querySelector("#input").blur();
+              document.querySelector("#input").value = "";
+              playing = false;
+              buzzing = false;
+              typing = false;
+              edit = true;
+              document.querySelector("#ans").innerHTML = ques["answer_sanitized"];
+              document.querySelector("#submit").innerHTML = "Next";
+              document.querySelector("#reveal").innerHTML = "Learn";
+              document.querySelector("#reveal").onclick = () => {learn(ques)};
+              document.querySelector("#submit").onclick = next;
+              for (let a = 0; a < rest.length; a++) {
+                let b = document.querySelector("#ques").innerHTML;
+                document.querySelector("#ques").innerHTML = b + " " + rest[a];
+              }
+              document.querySelector("#loading").style.visibility = "hidden";
+            }
+
+            function reveal(ques) {
+              if ((playing || typing)) {
+                return;
+              }
+              document.querySelector("#loading").style.visibility = "visible";
+              playing = false;
+              quit = true;
+              buzzing = false;
+              tempReveal = false;
+              edit = true;
+              document.querySelector("#ans").innerHTML = ques["answer_sanitized"];
+              document.querySelector("#submit").innerHTML = "Next";
+              document.querySelector("#reveal").innerHTML = "Learn";
+              console.log("Pass")
+              console.log(playing);
+              document.querySelector("#reveal").onclick = () => {learn(ques)};
+              document.querySelector("#submit").onclick = next;
+              document.querySelector("#loading").style.visibility = "hidden";
+            }
+
+            function learn(ques) {
+                if (playing) {
+                  return;
+                }
+                learning = true;
+                document.querySelector("#loading").style.visibility = "visible";
+                runGoogleScriptFunction("getAIResponse", ques["category"], ques["question_sanitized"], ques["answer_sanitized"])
+                .then(ans => {
+                    document.querySelector("#air").innerHTML = `${ans}`.replace(/<br><br><br>/g, "<br><br>");
+                    document.querySelector("#airb").style.visibility = "visible";
+                    document.querySelector("#reveal").onclick = function() {};
+                    document.querySelector("#loading").style.visibility = "hidden";
+                    learning = false;
+                });
+            }
+            
+            const diffsKey = {"0": "Trash", "1": "Middle School", "2": "Easy High School", "3": "Regular High School", "4": "Hard High School", "5": "National High School", "6": "Easy College", "7": "Medium College", "8": "Regionals College", "9": "Nationals College", "10": "Open"};
+            function next() {
+                if (nexting) {
+                  return;
+                }
+                if (learning) {
+                  return;
+                }
+                if (playing) {
+                  return;
+                }
+                nexting = true;
+                edit = false;
+                let difficulties = [];
+                let diff = [
+                  document.querySelector("#diff0 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff1 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff2 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff3 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff4 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff5 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff6 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff7 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff8 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff9 div").getAttribute("data-state") == "on",
+                  document.querySelector("#diff10 div").getAttribute("data-state") == "on",
+                ];
+                if (!diff[0] && !diff[1] && !diff[2] && !diff[3] && !diff[4] && !diff[5] && !diff[6] && !diff[7] && !diff[8] && !diff[9] && !diff[10]) {
+                  difficulties = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                } else {
+                  for (let a = 0; a < diff.length; a++) {
+                    if (diff[a]) {
+                      difficulties.push(a);
+                    }
+                  }
+                }
+                let categories = [];
+                let cat = [
+                  document.querySelector("#cat1 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat2 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat3 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat4 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat5 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat6 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat7 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat8 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat9 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat10 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat11 div").getAttribute("data-state") == "on",
+                  document.querySelector("#cat12 div").getAttribute("data-state") == "on",
+                ]
+                if (!cat[0] && !cat[1] && !cat[2] && !cat[3] && !cat[4] && !cat[5] && !cat[6] && !cat[7] && !cat[8] && !cat[9] && !cat[10] && !cat[11]) {
+                  categories = [true, true, true, true, true, true, true, true, true, true, true, true];
+                } else {
+                  categories = cat;
+                }
+                document.querySelector("#loading").style.visibility = "visible";
+                document.querySelector("#submit").innerHTML = "Buzz";
+                document.querySelector("#reveal").innerHTML = "Reveal";
+                document.querySelector("#ques").innerHTML = "";
+                document.querySelector("#input").value = "";
+                document.querySelector("#ans").innerHTML = "";
+                document.querySelector("#air").innerHTML = "";
+                document.querySelector("#airb").style.visibility = "hidden";
+                runGoogleScriptFunction("getQBReaderQuestion", difficulties, categories)
+                .then(quet => {
+                  ques = quet["tossups"][0];
+                  document.querySelector("#cats").innerHTML = diffsKey[`${ques["difficulty"]}`] + ", " + ques["category"];
+                  let question = ques["question_sanitized"];
+                  if (/\(\*\)/.test(question)) {
+                    let [power, remain] = question.split("(*)");
+                    power = power.split(" ").map(item => `<strong>${item}</strong>`);
+                    remain = remain.split(" ");
+                    question = [...power, "(*)", ...remain];
+                  } else {
+                    question = question.split("(*)");
+                  }
+                  len = question.length;
+                  document.querySelector("#loading").style.visibility = "hidden";
+                  document.querySelector("#submit").onclick = () => {
+                    buzzed = true;
+                    typing = true;
+                    document.querySelector("#submit").innerHTML = "Submit";
+                    document.querySelector("#submit").onclick = () => {submit()};
+                  };
+                  document.querySelector("#reveal").onclick = () => {reveal(ques)};
+                  nexting = false;
+                  play(question);
+                });
+            }
+
+            document.querySelector("#submit").onclick = next;
+        });
+    </script>
+</body>
+
+</html>
