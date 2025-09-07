@@ -19,7 +19,7 @@ const prompts = {
 };
 
 function getAIResponse(cat, ques, ans) {
-  let url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCnhZl83hlfanHBoVXxJ1HWg0rSJQaynPM';
+  let url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=<insert_key_here>';
   
   let prompt = prompts[cat];
 
